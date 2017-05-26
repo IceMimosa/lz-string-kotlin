@@ -1,5 +1,7 @@
 package me.patamon.lz
 
+import me.patamon.lz.array.UInt8Array
+
 /**
  * LZ-based compression algorithm
  */
@@ -58,7 +60,28 @@ object LZString {
         })
     }
 
-    //TODO: java has no Uint8Array type, what can we do?
+    fun compressToUint8Array(input: String?): UInt8Array {
+        val compressed = LZString.compress(input)
+        val buf = UInt8Array(compressed.length * 2)
+
+        compressed.forEachIndexed { index, current_value ->
+            buf[index * 2] = (current_value.toInt() ushr 8).toShort()
+            buf[index * 2 + 1] = (current_value.toInt() % 256).toShort()
+        }
+        return buf
+    }
+
+    fun decompressFromUint8Array(buffer: UInt8Array?): String? {
+        buffer ?: return ""
+        val totalLen = buffer.length() / 2
+        val result = CharArray(totalLen)
+        var index = 0
+        while (index < totalLen) {
+            result[index] = (buffer[index * 2] * 256 + buffer[index * 2 + 1]).toChar()
+            index++
+        }
+        return LZString.decompress(result.joinToString(""))
+    }
 
     fun compressToEncodedURIComponent(input: String?): String {
         input ?: return ""
@@ -76,7 +99,7 @@ object LZString {
         })
     }
 
-    fun compress(uncompressed: String): String {
+    fun compress(uncompressed: String?): String {
         return LZString._compress(uncompressed, 16, { a ->
             a.toChar()
         })
@@ -510,13 +533,14 @@ object LZString {
     }
 
     @JvmStatic fun main(args: Array<String>) {
-        val input: String
-        //		input = "hello";
+        var input: String
+        input = "hello world !!!"
         input = "hello1hello2hello3hello4hello5hello6hello7hello8hello9helloAhelloBhelloChelloDhelloEhelloF"
 
         println(decompress(compress(input)))
         println(decompressFromBase64(compressToBase64(input)))
         println(decompressFromUTF16(compressToUTF16(input)))
         println(decompressFromEncodedURIComponent(compressToEncodedURIComponent(input)))
+        println(decompressFromUint8Array(compressToUint8Array(input)))
     }
 }
