@@ -73,6 +73,7 @@ object LZString {
 
     fun decompressFromUint8Array(buffer: UInt8Array?): String? {
         buffer ?: return ""
+        if (buffer.length() == 0) return null
         val totalLen = buffer.length() / 2
         val result = CharArray(totalLen)
         var index = 0
@@ -87,7 +88,7 @@ object LZString {
         input ?: return ""
         return LZString._compress(input, 6, { a ->
             keyStrUriSafe[a]
-        }) + " "
+        }) + ""
     }
 
     fun decompressFromEncodedURIComponent(input: String?): String? {
@@ -530,17 +531,5 @@ object LZString {
             }
 
         }
-    }
-
-    @JvmStatic fun main(args: Array<String>) {
-        var input: String
-        input = "hello world !!!"
-        input = "hello1hello2hello3hello4hello5hello6hello7hello8hello9helloAhelloBhelloChelloDhelloEhelloF"
-
-        println(decompress(compress(input)))
-        println(decompressFromBase64(compressToBase64(input)))
-        println(decompressFromUTF16(compressToUTF16(input)))
-        println(decompressFromEncodedURIComponent(compressToEncodedURIComponent(input)))
-        println(decompressFromUint8Array(compressToUint8Array(input)))
     }
 }

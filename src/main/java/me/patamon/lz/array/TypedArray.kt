@@ -14,10 +14,10 @@ abstract class TypedArray {
 
     protected constructor(buffer: ByteBuffer) {
         if (!buffer.isDirect) {
-            throw IllegalArgumentException("ByteBuffer must be a allocated as a direct ByteBuffer");
+            throw IllegalArgumentException("ByteBuffer must be a allocated as a direct ByteBuffer")
         }
         if ((buffer.limit() % getStructureSize(this.getType())) != 0) {
-            throw IllegalArgumentException("ByteBuffer must be a allocated as a direct ByteBuffer");
+            throw IllegalArgumentException("ByteBuffer must be a allocated as a direct ByteBuffer")
         }
         this.buffer = buffer
     }
@@ -56,5 +56,21 @@ abstract class TypedArray {
         TypedArrayValue.UNSIGNED_INT_8_ARRAY,
         TypedArrayValue.UNSIGNED_INT_8_CLAMPED_ARRAY -> 1
         else -> throw IllegalArgumentException("Cannot create a typed array of the type")
+    }
+
+    override fun toString(): String {
+        return buffer.toString()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other?.javaClass != javaClass) return false
+        other as TypedArray
+        if (buffer != other.buffer) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return this.buffer.hashCode()
     }
 }

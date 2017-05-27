@@ -10,6 +10,12 @@ open class UInt8Array(buffer: ByteBuffer) : TypedArray(buffer), Serializable {
 
     constructor(length: Int): this(ByteBuffer.allocateDirect(length))
 
+    constructor(vararg elements: Short): this(ByteBuffer.allocateDirect(elements.size)) {
+       elements.forEachIndexed { index, element ->
+           this[index] = element
+       }
+    }
+
     /**
      * Returns the 8-bit unsigned integer at the given index.
      *
@@ -41,5 +47,18 @@ open class UInt8Array(buffer: ByteBuffer) : TypedArray(buffer), Serializable {
 
     override fun getType(): Int {
         return TypedArrayValue.UNSIGNED_INT_8_ARRAY
+    }
+
+    override fun toString(): String {
+        val sb = StringBuilder()
+        sb.append("[")
+        for (i in 0 until this.length()) {
+            sb.append(this[i])
+            if (i != this.length() - 1) {
+                sb.append(",")
+            }
+        }
+        sb.append("]")
+        return sb.toString()
     }
 }
